@@ -1,200 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sober Tracker Reader</title>
 
-  <title>Sober Tracker</title>
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#22c55e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#22c55e">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #e5e7eb;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
 
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --accent: #22c55e;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-    }
+  .app {
+    max-width: 480px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 20px;
+    background: rgba(30, 41, 59, 0.7);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
 
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
+  h1 {
+    text-align: center;
+    margin-top: 0;
+  }
 
-    .app {
-      max-width: 420px;
-      width: 100%;
-      background: var(--card);
-      border-radius: 16px;
-      padding: 20px;
-    }
+  .card {
+    background: rgba(20,30,50,0.5);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+  }
 
-    h1 {
-      text-align: center;
-      margin-top: 0;
-    }
+  .card:hover { transform: translateY(-4px); }
 
-    label {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
+  .card strong {
+    font-size: 1.8rem;
+    display: block;
+    margin-top: 8px;
+  }
 
-    input, button {
-      width: 100%;
-      margin-top: 6px;
-      margin-bottom: 16px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 1rem;
-    }
+  .motivation {
+    font-style: italic;
+    color: #22c55e;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 1rem;
+  }
 
-    input {
-      background: #020617;
-      color: var(--text);
-    }
+  input, button {
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+  }
 
-    button {
-      background: var(--accent);
-      color: #052e16;
-      font-weight: 600;
-    }
+  input {
+    background: rgba(0,0,0,0.3);
+    color: #e5e7eb;
+  }
 
-    .stat {
-      background: #020617;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
-      text-align: center;
-    }
+  button {
+    background: #22c55e;
+    color: #0f172a;
+    font-weight: 600;
+    cursor: pointer;
+  }
 
-    .stat strong {
-      display: block;
-      font-size: 1.3rem;
-    }
+  .reset { background: transparent; color: #94a3b8; margin-top: 8px; }
 
-    .motivation {
-      margin-top: 16px;
-      text-align: center;
-      font-style: italic;
-      color: var(--accent);
-    }
-
-    .reset {
-      background: transparent;
-      color: var(--muted);
-    }
-  </style>
+</style>
 </head>
-
 <body>
-  <div class="app">
-    <h1>🧠 Sober Tracker</h1>
 
-    <label>Last time you used</label>
-    <input type="datetime-local" id="lastUse">
+<div class="app">
+  <h1>🧠 Sober Tracker Reader</h1>
 
-    <label>Average daily cost</label>
-    <input type="number" id="dailyCost" placeholder="e.g. 30">
+  <label>Last use</label>
+  <input type="datetime-local" id="lastUse">
 
-    <button id="save">Start / Update</button>
+  <label>Daily cost</label>
+  <input type="number" id="dailyCost" placeholder="e.g. 30">
 
-    <div class="stat">
-      <span>Sober time</span>
-      <strong id="time">—</strong>
-    </div>
+  <button id="saveBtn">Save / Update</button>
+  <button class="reset" id="resetBtn">Reset</button>
 
-    <div class="stat">
-      <span>Money saved</span>
-      <strong id="money">—</strong>
-    </div>
-
-    <div class="motivation" id="msg"></div>
-
-    <button class="reset" id="reset">Reset</button>
+  <div class="card">
+    <span>Sober Time</span>
+    <strong id="soberTime">—</strong>
   </div>
 
+  <div class="card">
+    <span>Money Saved</span>
+    <strong id="moneySaved">—</strong>
+  </div>
+
+  <div class="motivation" id="motivation">You are stronger today!</div>
+</div>
+
 <script>
-  const lastUseEl = document.getElementById("lastUse");
-  const dailyCostEl = document.getElementById("dailyCost");
-  const timeEl = document.getElementById("time");
-  const moneyEl = document.getElementById("money");
-  const msgEl = document.getElementById("msg");
+const lastUseEl = document.getElementById('lastUse');
+const dailyCostEl = document.getElementById('dailyCost');
+const soberTimeEl = document.getElementById('soberTime');
+const moneySavedEl = document.getElementById('moneySaved');
+const motivationEl = document.getElementById('motivation');
 
-  const messages = [
-    "One day at a time.",
-    "You are stronger than the urge.",
-    "Sobriety is freedom.",
-    "This discomfort will pass.",
-    "Your future self thanks you.",
-    "Progress, not perfection."
-  ];
+const messages = [
+  "One day at a time.",
+  "Your future self thanks you.",
+  "Sobriety is freedom.",
+  "This discomfort will pass.",
+  "Every minute counts.",
+  "You didn’t come this far to quit.",
+  "Progress, not perfection."
+];
 
-  function save() {
-    localStorage.setItem("lastUse", lastUseEl.value);
-    localStorage.setItem("dailyCost", dailyCostEl.value);
-  }
+// Load saved state
+function load() {
+  lastUseEl.value = localStorage.getItem('lastUse') || '';
+  dailyCostEl.value = localStorage.getItem('dailyCost') || '';
+}
 
-  function load() {
-    lastUseEl.value = localStorage.getItem("lastUse") || "";
-    dailyCostEl.value = localStorage.getItem("dailyCost") || "";
-  }
+// Save state
+function save() {
+  localStorage.setItem('lastUse', lastUseEl.value);
+  localStorage.setItem('dailyCost', dailyCostEl.value);
+}
 
-  function update() {
-    if (!lastUseEl.value) return;
+// Animate counters
+function animateCounter(el, value) {
+  let start = parseFloat(el.textContent.replace(/[^\d.]/g,'')) || 0;
+  let end = parseFloat(value);
+  if (isNaN(end)) { el.textContent = '—'; return; }
+  let increment = (end - start) / 30;
+  let count = 0;
+  const interval = setInterval(() => {
+    start += increment;
+    el.textContent = el === moneySavedEl ? start.toFixed(2) : Math.floor(start) + (el===soberTimeEl?'':'');
+    count++;
+    if (count>=30) clearInterval(interval);
+  }, 30);
+}
 
-    const last = new Date(lastUseEl.value);
-    const now = new Date();
-    const diff = now - last;
-    if (diff < 0) return;
+// Update stats
+function updateStats() {
+  if(!lastUseEl.value) return;
+  const last = new Date(lastUseEl.value);
+  const now = new Date();
+  const diff = now - last;
+  if(diff<0) return;
 
-    const mins = Math.floor(diff / 60000);
-    const hrs = Math.floor(mins / 60);
-    const days = Math.floor(hrs / 24);
+  const minutes = Math.floor(diff/60000);
+  const hours = Math.floor(minutes/60);
+  const days = Math.floor(hours/24);
+  animateCounter(soberTimeEl, `${days}d ${hours%24}h ${minutes%60}m`);
 
-    timeEl.textContent = `${days}d ${hrs % 24}h ${mins % 60}m`;
+  const cost = parseFloat(dailyCostEl.value || 0);
+  const saved = (diff/86400000)*cost;
+  animateCounter(moneySavedEl, saved.toFixed(2));
+}
 
-    const cost = parseFloat(dailyCostEl.value || 0);
-    const saved = (diff / 86400000) * cost;
-    moneyEl.textContent = saved.toFixed(2);
-  }
+// Random motivation
+function randomMotivation() {
+  motivationEl.textContent = messages[Math.floor(Math.random()*messages.length)];
+}
 
-  function motivation() {
-    msgEl.textContent =
-      messages[Math.floor(Math.random() * messages.length)];
-  }
+// Event listeners
+document.getElementById('saveBtn').onclick = () => { save(); updateStats(); randomMotivation(); };
+document.getElementById('resetBtn').onclick = () => { localStorage.clear(); location.reload(); };
 
-  document.getElementById("save").onclick = () => {
-    save();
-    update();
-    motivation();
-  };
+// Init
+load();
+updateStats();
+randomMotivation();
+setInterval(updateStats, 1000);
+setInterval(randomMotivation, 30000);
 
-  document.getElementById("reset").onclick = () => {
-    localStorage.clear();
-    location.reload();
-  };
-
-  load();
-  update();
-  motivation();
-
-  setInterval(update, 1000);
-  setInterval(motivation, 60000);
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
-  }
+// PWA service worker
+if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
 </script>
+
 </body>
 </html>
